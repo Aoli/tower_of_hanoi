@@ -231,6 +231,9 @@ class _HanoiGameState extends State<HanoiGame> {
 
   @override
   Widget build(BuildContext context) {
+    // Check screen width to adjust padding
+    bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50, // bg-slate-100
       body: Center(
@@ -286,66 +289,117 @@ class _HanoiGameState extends State<HanoiGame> {
                 ),
                 const SizedBox(height: 24.0),
 
-                // Game Info Bar
+                // Game Info Bar - SIGNIFICANTLY SMALLER
                 Container(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(
+                    isSmallScreen ? 8.0 : 12.0,
+                  ), // Reduced padding
                   decoration: BoxDecoration(
-                    color: Colors.blueGrey.shade50, // bg-slate-50
-                    borderRadius: BorderRadius.circular(8.0), // rounded-lg
+                    color: Colors.blueGrey.shade50,
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          _message,
-                          style: TextStyle(
-                            fontSize: 18.0, // text-xl
-                            fontWeight: FontWeight.w600,
-                            color: _messageTextColor,
-                          ),
-                          textAlign: TextAlign.center,
+                  child: isSmallScreen
+                      // Vertical layout for small screens
+                      ? Column(
+                          children: [
+                            // Message text
+                            Text(
+                              _message,
+                              style: TextStyle(
+                                fontSize: 14.0, // Smaller font
+                                fontWeight: FontWeight.w600,
+                                color: _messageTextColor,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 4.0),
+                            // Move counters
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Moves: ',
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Colors.blueGrey.shade600,
+                                  ),
+                                ),
+                                Text(
+                                  '$_moveCount',
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: 8.0),
+                                Text(
+                                  'Optimal: ',
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Colors.blueGrey.shade600,
+                                  ),
+                                ),
+                                Text(
+                                  '${pow(2, _numberOfDisks).toInt() - 1}',
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      // Original horizontal layout for larger screens, but with smaller text
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _message,
+                                style: TextStyle(
+                                  fontSize: 15.0, // Smaller font
+                                  fontWeight: FontWeight.w600,
+                                  color: _messageTextColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  'Moves: ',
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: Colors.blueGrey.shade600,
+                                  ),
+                                ),
+                                Text(
+                                  '$_moveCount',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: 8.0), // Smaller spacing
+                                Text(
+                                  'Optimal: ',
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: Colors.blueGrey.shade600,
+                                  ),
+                                ),
+                                Text(
+                                  '${pow(2, _numberOfDisks).toInt() - 1}',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Moves: ',
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.blueGrey.shade600,
-                            ),
-                          ),
-                          Text(
-                            '$_moveCount',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey.shade900,
-                            ),
-                          ),
-                          const SizedBox(width: 16.0),
-                          Text(
-                            'Optimal: ',
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.blueGrey.shade600,
-                            ),
-                          ),
-                          Text(
-                            '${pow(2, _numberOfDisks).toInt() - 1}',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey.shade900,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                 ),
                 const SizedBox(height: 24.0),
 
@@ -357,19 +411,26 @@ class _HanoiGameState extends State<HanoiGame> {
                   height: 250, // min-h-[250px]
                   margin: const EdgeInsets.only(bottom: 32.0), // mb-8
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: List.generate(3, (towerIndex) {
-                      return GestureDetector(
-                        onTap: () => _handleTowerTap(towerIndex),
-                        child: TowerWidget(
-                          disks: _towers[towerIndex],
-                          numberOfDisks: _numberOfDisks,
-                          isSelected: _selectedTowerIndex == towerIndex,
-                          diskColors: _diskColors,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      for (int i = 0; i < _towers.length; i++)
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isSmallScreen ? 1.0 : 2.0,
+                            ),
+                            child: GestureDetector(
+                              onTap: () => _handleTowerTap(i),
+                              child: TowerWidget(
+                                disks: _towers[i],
+                                numberOfDisks: _numberOfDisks,
+                                isSelected: _selectedTowerIndex == i,
+                                diskColors: _diskColors,
+                              ),
+                            ),
+                          ),
                         ),
-                      );
-                    }),
+                    ],
                   ),
                 ),
 
