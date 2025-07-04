@@ -289,11 +289,14 @@ class _HanoiGameState extends State<HanoiGame> {
                 ),
                 const SizedBox(height: 24.0),
 
-                // Game Info Bar - SIGNIFICANTLY SMALLER
+                // Game Info Bar - FIXED HEIGHT
                 Container(
                   padding: EdgeInsets.all(
                     isSmallScreen ? 8.0 : 12.0,
                   ), // Reduced padding
+                  height: isSmallScreen
+                      ? 80.0
+                      : 60.0, // Fixed height based on screen size
                   decoration: BoxDecoration(
                     color: Colors.blueGrey.shade50,
                     borderRadius: BorderRadius.circular(8.0),
@@ -301,18 +304,26 @@ class _HanoiGameState extends State<HanoiGame> {
                   child: isSmallScreen
                       // Vertical layout for small screens
                       ? Column(
+                          mainAxisAlignment: MainAxisAlignment
+                              .center, // Center content vertically
                           children: [
-                            // Message text
-                            Text(
-                              _message,
-                              style: TextStyle(
-                                fontSize: 14.0, // Smaller font
-                                fontWeight: FontWeight.w600,
-                                color: _messageTextColor,
+                            // Message text with overflow handling
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  _message,
+                                  style: TextStyle(
+                                    fontSize: 14.0, // Smaller font
+                                    fontWeight: FontWeight.w600,
+                                    color: _messageTextColor,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow
+                                      .ellipsis, // Handle overflow with ellipsis
+                                  maxLines: 2, // Allow two lines for messages
+                                ),
                               ),
-                              textAlign: TextAlign.center,
                             ),
-                            SizedBox(height: 4.0),
                             // Move counters
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -350,7 +361,7 @@ class _HanoiGameState extends State<HanoiGame> {
                             ),
                           ],
                         )
-                      // Original horizontal layout for larger screens, but with smaller text
+                      // Horizontal layout for larger screens
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -358,11 +369,14 @@ class _HanoiGameState extends State<HanoiGame> {
                               child: Text(
                                 _message,
                                 style: TextStyle(
-                                  fontSize: 15.0, // Smaller font
+                                  fontSize: 15.0,
                                   fontWeight: FontWeight.w600,
                                   color: _messageTextColor,
                                 ),
                                 textAlign: TextAlign.center,
+                                overflow: TextOverflow
+                                    .ellipsis, // Handle overflow with ellipsis
+                                maxLines: 1, // One line for larger screens
                               ),
                             ),
                             Row(
@@ -381,7 +395,7 @@ class _HanoiGameState extends State<HanoiGame> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(width: 8.0), // Smaller spacing
+                                SizedBox(width: 8.0),
                                 Text(
                                   'Optimal: ',
                                   style: TextStyle(
