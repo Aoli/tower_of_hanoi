@@ -440,6 +440,7 @@ class _HanoiGameState extends State<HanoiGame> {
                                 numberOfDisks: _numberOfDisks,
                                 isSelected: _selectedTowerIndex == i,
                                 diskColors: _diskColors,
+                                onTowerSelected: () => _handleTowerTap(i),
                               ),
                             ),
                           ),

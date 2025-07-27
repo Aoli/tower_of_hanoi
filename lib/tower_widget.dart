@@ -8,6 +8,7 @@ class TowerWidget extends StatelessWidget {
   final int numberOfDisks;
   final bool isSelected;
   final List<Color> diskColors;
+  final VoidCallback onTowerSelected;
 
   const TowerWidget({
     super.key,
@@ -15,6 +16,7 @@ class TowerWidget extends StatelessWidget {
     required this.numberOfDisks,
     required this.isSelected,
     required this.diskColors,
+    required this.onTowerSelected,
   });
 
   @override
@@ -64,7 +66,7 @@ class TowerWidget extends StatelessWidget {
                   1), // scale down for more disks or smaller screens
         );
 
-        return SizedBox(
+        final towerVisual = SizedBox(
           width: towerWidth,
           height: towerHeight,
           child: Column(
@@ -139,6 +141,33 @@ class TowerWidget extends StatelessWidget {
               ),
             ],
           ),
+        );
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            towerVisual,
+            const SizedBox(height: 8.0),
+            ElevatedButton(
+              onPressed: onTowerSelected,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isSelected
+                    ? Colors.blue.shade600
+                    : Colors.blueGrey,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: isSmallScreen ? 4 : 8,
+                ),
+                textStyle: TextStyle(
+                  fontSize: isSmallScreen ? 12 : 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              child: const Text('Select'),
+            ),
+          ],
         );
       },
     );
