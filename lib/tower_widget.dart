@@ -66,106 +66,106 @@ class TowerWidget extends StatelessWidget {
                   1), // scale down for more disks or smaller screens
         );
 
-        final towerVisual = SizedBox(
-          width: towerWidth,
-          height: towerHeight,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              // Disk Stack (above the rod)
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
+        return Column(
+          children: [
+            // Button at the top
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: ElevatedButton(
+                onPressed: onTowerSelected,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isSelected
+                      ? Colors.blue.shade600
+                      : Colors.blueGrey,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: isSmallScreen ? 4 : 8,
+                  ),
+                  textStyle: TextStyle(
+                    fontSize: isSmallScreen ? 12 : 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text('Select'),
+              ),
+            ),
+            // Tower visual wrapped in Expanded to fill remaining space
+            Expanded(
+              child: SizedBox(
+                width: towerWidth,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // Tower Rod (background)
-                    Container(
-                      width: rodWidth,
-                      height: rodHeight,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Colors.blue.shade400
-                            : Colors.blueGrey.shade300,
-                        borderRadius: BorderRadius.circular(rodWidth / 2),
+                    // Disk Stack (above the rod)
+                    Expanded(
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          // Tower Rod (background)
+                          Container(
+                            width: rodWidth,
+                            height: rodHeight,
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? Colors.blue.shade400
+                                  : Colors.blueGrey.shade300,
+                              borderRadius: BorderRadius.circular(rodWidth / 2),
+                            ),
+                          ),
+                          // Disks (stacked on rod)
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: disks.reversed.map((diskSize) {
+                              // Create more dramatic size differences between disks with 30% smaller sizes
+                              final double basePercentage = isSmallScreen
+                                  ? 14
+                                  : 21; // 30% smaller base size
+                              final double sizeMultiplier = isSmallScreen
+                                  ? 7
+                                  : 8.4; // 30% smaller increments
+
+                              // Calculate disk width as percentage of tower width
+                              final double diskWidthPercentage =
+                                  basePercentage + (diskSize * sizeMultiplier);
+                              final double diskWidth =
+                                  towerWidth * (diskWidthPercentage / 100);
+
+                              // Scale disk height based on screen size
+                              final double actualDiskHeight = isSmallScreen
+                                  ? min(18.0, diskHeight)
+                                  : diskHeight;
+
+                              return DiskWidget(
+                                diskSize: diskSize,
+                                diskWidth: diskWidth,
+                                diskHeight: actualDiskHeight,
+                                diskColor:
+                                    diskColors[(diskSize - 1) %
+                                        diskColors.length],
+                                isSelected:
+                                    isSelected &&
+                                    disks.isNotEmpty &&
+                                    disks.last == diskSize,
+                                isSmallScreen: isSmallScreen,
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
                     ),
-                    // Disks (stacked on rod)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: disks.reversed.map((diskSize) {
-                        // Create more dramatic size differences between disks with 30% smaller sizes
-                        // Scale down further for small screens
-                        final double basePercentage = isSmallScreen
-                            ? 14
-                            : 21; // 30% smaller base size on small screens
-                        final double sizeMultiplier = isSmallScreen
-                            ? 7
-                            : 8.4; // 30% smaller increments on small screens
-
-                        // Calculate disk width as percentage of tower width with more distinct sizing
-                        final double diskWidthPercentage =
-                            basePercentage + (diskSize * sizeMultiplier);
-                        final double diskWidth =
-                            towerWidth * (diskWidthPercentage / 100);
-
-                        // Scale disk height based on screen size too
-                        final double actualDiskHeight = isSmallScreen
-                            ? min(18.0, diskHeight)
-                            : // Smaller height on small screens
-                              diskHeight;
-
-                        return DiskWidget(
-                          diskSize: diskSize,
-                          diskWidth: diskWidth,
-                          diskHeight: actualDiskHeight,
-                          diskColor:
-                              diskColors[(diskSize - 1) % diskColors.length],
-                          isSelected:
-                              isSelected &&
-                              disks.isNotEmpty &&
-                              disks.last == diskSize,
-                          isSmallScreen: isSmallScreen,
-                        );
-                      }).toList(),
+                    // Tower Base (at the bottom)
+                    Container(
+                      height: baseHeight,
+                      width: baseWidth, // Use the narrower width
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey.shade400,
+                        borderRadius: BorderRadius.circular(baseRadius),
+                      ),
                     ),
                   ],
                 ),
               ),
-              // Tower Base (at the bottom)
-              Container(
-                height: baseHeight,
-                width: baseWidth, // Use the narrower width
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey.shade400,
-                  borderRadius: BorderRadius.circular(baseRadius),
-                ),
-              ),
-            ],
-          ),
-        );
-
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            towerVisual,
-            const SizedBox(height: 8.0),
-            ElevatedButton(
-              onPressed: onTowerSelected,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isSelected
-                    ? Colors.blue.shade600
-                    : Colors.blueGrey,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: isSmallScreen ? 4 : 8,
-                ),
-                textStyle: TextStyle(
-                  fontSize: isSmallScreen ? 12 : 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              child: const Text('Select'),
             ),
           ],
         );
